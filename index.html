@@ -91,6 +91,9 @@
             <label><input type="radio" name="age" value="20以上"> 20以上</label>
         </div>
 
+        <label for="favoriteSong">出現エリア (最大4文字):</label>
+        <input type="text" id="area" maxlength="4" required>
+
         <label for="favoriteSong">聴きたい曲 (最大48文字):</label>
         <input type="text" id="favoriteSong" maxlength="48" required>
 
@@ -212,6 +215,7 @@
         <canvas id="licenseCanvas" width="970" height="600"></canvas>
     </div>
     <a id="downloadLink" download="license.png" style="display: none;">画像をダウンロード</a>
+    <button id="tweetButton" style="display: none;">Twitterに投稿</button>
 
     <script>
         const canvas = document.getElementById('licenseCanvas');
@@ -224,7 +228,8 @@
         // 位置の定義
         const namePosition = { x: 240, y: 10 };      // 名前
         const agePosition = { x: 680, y: 10 };       // 年齢
-        const genderPosition = { x: 800, y: 10 };    // 性別
+        const genderPosition = { x: 790, y: 10 };    // 性別
+        const areaPosition = { x: 850, y: 10 };      // エリア
         const songPosition = { x: 240, y: 105 };     // 聴きたい曲
         const commentPosition = { x: 20, y: 204 };  // 一言
         const imagePosition = { x: 589, y: 152 };   // 画像
@@ -264,6 +269,8 @@
             const gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
             const age = document.querySelector('input[name="age"]:checked') ? document.querySelector('input[name="age"]:checked').value : '';
             const favoriteSong = document.getElementById('favoriteSong').value;
+            const area = document.getElementById('area').value;
+            
             const comment = document.getElementById('comment').value;
             const imageInput = document.getElementById('imageInput').files[0];
 
@@ -285,9 +292,15 @@
                 if (gender !== '未選択') {
                     ctx.fillText(gender, genderPosition.x, genderPosition.y + 30);
                 }
+                // エリアを描画 
+                if (area !== '') {
+                    ctx.fillText(area, areaPosition.x, areaPosition.y + 30);
+                }
                 
                 // 聴きたい曲を描画 (12文字ごとに改行)
                 wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
+
+                
 
                 // 一言を描画 (16文字ごとに改行)
                 wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
