@@ -48,11 +48,10 @@
             background-color: #0056b3;
         }
         canvas {
-            border: 1px solid #000;
             margin-top: 20px;
             width: 100%; /* スマホ対応 */
             height: auto; /* 自動調整 */
-            max-height: 525px; /* 最大高さを設定 */
+            max-height: 600px; /* 最大高さを設定 */
             max-width: 970px; /* 最大幅を設定 */            
         }
         #prefectures {
@@ -212,6 +211,7 @@
     <div style="display: flex; justify-content: center; width: 100%;">
         <canvas id="licenseCanvas" width="970" height="600"></canvas>
     </div>
+    <a id="downloadLink" download="license.png" style="display: none;">画像をダウンロード</a>
 
     <script>
         const canvas = document.getElementById('licenseCanvas');
@@ -343,6 +343,12 @@
                         ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
                     }
                 });
+                // 画像のダウンロードリンクを生成
+                const downloadLink = document.getElementById('downloadLink');
+                        downloadLink.href = canvas.toDataURL('image/png'); // canvasを画像データに変換
+                        downloadLink.style.display = 'block'; // リンクを表示
+                        downloadLink.textContent = '生成された画像をダウンロード'; // リンクテキストを設定
+
             }
         });
     </script>
