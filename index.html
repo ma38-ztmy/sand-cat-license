@@ -47,11 +47,12 @@
         button:hover {
             background-color: #0056b3;
         }
-        canvas {
+        #generatedImage {
             margin-top: 20px;
-            width: 100%; /* スマホ対応 */
-            height: auto; /* 自動調整 */
-            max-height: 600px; /* 最大高さを設定 */
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 600px;
             max-width: 970px; /* 最大幅を設定 */            
         }
         #prefectures {
@@ -73,8 +74,9 @@
 </head>
 <body>
     <h1>砂猫免許証作成ツール</h1>
-    <p>ver 0.0.８</p>
+    <p>ver 0.0.8</p>
     <form id="licenseForm">
+        <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
         <input type="text" id="name" maxlength="14" required>
 
@@ -209,14 +211,15 @@
                 <label><input type="checkbox" name="prefecture京都" value="2"> 2</label>
             </div>
         </div>
-
+        
         <button type="button" id="generateButton">画像を生成</button>
     </form>
+    
     <div style="display: flex; justify-content: center; width: 100%;">
-        <canvas id="licenseCanvas" width="970" height="600"></canvas>
+        <canvas id="licenseCanvas" width="970" height="600" style="display:none;"></canvas>
     </div>
-    <a id="downloadLink" download="license.png" style="display: none;">画像をダウンロード</a>
-    <button id="tweetButton" style="display: none;">Twitterに投稿</button>
+
+    <img id="generatedImage" alt="生成された画像" style="display: none;" />
 
     <script>
         const canvas = document.getElementById('licenseCanvas');
@@ -226,7 +229,6 @@
         const fontSize = 30; // フォントサイズ
         ctx.font = `${fontSize}px Arial`; // フォントの設定
 
-        // 位置の定義
         const namePosition = { x: 210, y: 10 };      // 名前
         const agePosition = { x: 660, y: 10 };       // 年齢
         const genderPosition = { x: 765, y: 10 };    // 性別
@@ -237,7 +239,6 @@
         const prefecturePosition = { x: 78, y: 423}; // 参戦予定
         const prefecturePosition2 = { x: 78, y: 519 }; // 参戦予定2
 
-        // 文字数に基づく改行処理
         function wrapTextByCharCount(ctx, text, x, y, maxCharsPerLine, lineHeight) {
             const lines = text.split('\n'); // 改行コードで分割
             let currentY = y;
@@ -264,18 +265,15 @@
             }
         }
 
-        // 画像生成ボタンの処理
         document.getElementById('generateButton').addEventListener('click', function() {
             const name = document.getElementById('name').value;
             const gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
             const age = document.querySelector('input[name="age"]:checked') ? document.querySelector('input[name="age"]:checked').value : '';
             const favoriteSong = document.getElementById('favoriteSong').value;
             const area = document.getElementById('area').value;
-            
             const comment = document.getElementById('comment').value;
             const imageInput = document.getElementById('imageInput').files[0];
 
-            // 背景画像の設定
             const backgroundImage = new Image();
             backgroundImage.src = 'dd.drawio.png'; // 同ディレクトリに背景画像を配置
 
@@ -283,30 +281,20 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
-                // 名前を描画
                 ctx.fillText(name, namePosition.x, namePosition.y + 30);
-                // 年齢を描画（未選択の場合は何も表示しない）
                 if (age !== '未選択') {
                     ctx.fillText(age, agePosition.x, agePosition.y + 30);
                 }
-                // 性別を描画（未選択の場合は何も表示しない）
                 if (gender !== '未選択') {
                     ctx.fillText(gender, genderPosition.x, genderPosition.y + 30);
                 }
-                // エリアを描画 
                 if (area !== '') {
                     ctx.fillText(area, areaPosition.x, areaPosition.y + 30);
                 }
-                
-                // 聴きたい曲を描画 (12文字ごとに改行)
+
                 wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
-
-                
-
-                // 一言を描画 (16文字ごとに改行)
                 wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
-                
-                // 画像の描画（大きい方を380pxにリサイズ）
+
                 if (imageInput) {
                     const img = new Image();
                     img.src = URL.createObjectURL(imageInput);
@@ -315,8 +303,6 @@
                         const originalHeight = img.height;
 
                         let scaledWidth, scaledHeight;
-
-                        // 縦横比を維持しつつ、大きい方を380に設定
                         if (originalWidth > originalHeight) {
                             scaledWidth = 380;
                             scaledHeight = (originalHeight / originalWidth) * 380;
@@ -324,12 +310,9 @@
                             scaledHeight = 380;
                             scaledWidth = (originalWidth / originalHeight) * 380;
                         }
-
                         ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
                     }
                 }
-
-
                 // 参戦予定の表示
                 let prefectureText = [];
                 const isBothChecked = {};
@@ -357,11 +340,10 @@
                         ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
                     }
                 });
-                // 画像のダウンロードリンクを生成
-                const downloadLink = document.getElementById('downloadLink');
-                        downloadLink.href = canvas.toDataURL('image/png'); // canvasを画像データに変換
-                        downloadLink.style.display = 'block'; // リンクを表示
-                        downloadLink.textContent = '生成された画像をダウンロード'; // リンクテキストを設定
+
+                const imgElement = document.getElementById('generatedImage');
+                imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
+                imgElement.style.display = 'block'; // 画像を表示
 
             }
         });
