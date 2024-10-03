@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免許証作成ツール</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            align-items: center; /* 中央揃え */            
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"], input[type="file"], select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        canvas {
+            border: 1px solid #000;
+            margin-top: 20px;
+            width: 100%; /* スマホ対応 */
+            height: auto; /* 自動調整 */
+            max-height: 525px; /* 最大高さを設定 */
+            max-width: 970px; /* 最大幅を設定 */            
+        }
+        #prefectures {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+        }
+        @media (min-width: 600px) {
+            form {
+                max-width: 600px;
+                margin: auto; /* センター揃え */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>免許証作成ツール</h1>
+    <form id="licenseForm">
+        <label for="name">名前 (最大14文字):</label>
+        <input type="text" id="name" maxlength="14" required>
+
+        <label for="gender">性別:</label>
+        <div>
+            <label><input type="radio" name="gender" value="未選択" checked> 未選択</label>
+            <label><input type="radio" name="gender" value="男性"> 男性</label>
+            <label><input type="radio" name="gender" value="女性"> 女性</label>
+        </div>
+
+        <label for="age">年齢:</label>
+        <div>
+            <label><input type="radio" name="age" value="未選択" checked> 未選択</label>
+            <label><input type="radio" name="age" value="20未満"> 20未満</label>
+            <label><input type="radio" name="age" value="20以上"> 20以上</label>
+        </div>
+
+        <label for="favoriteSong">聴きたい曲 (最大48文字):</label>
+        <input type="text" id="favoriteSong" maxlength="48" required>
+
+        <label for="comment">一言 (最大64文字、4行まで):</label>
+        <textarea id="comment" maxlength="64" rows="4" required></textarea>
+
+        <label for="imageInput">画像:</label>
+        <input type="file" id="imageInput" accept="image/*" required>
+
+        <label>参戦予定:</label>
+        <div id="prefectures">
+            <!-- 都道府県のチェックボックスをここに追加 -->
+            <div class="checkbox-label">
+                <strong>群馬:</strong>
+                <label><input type="checkbox" name="prefecture群馬" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture群馬" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>埼玉:</strong>
+                <label><input type="checkbox" name="prefecture埼玉" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture埼玉" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>東京:</strong>
+                <label><input type="checkbox" name="prefecture東京" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture東京" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>静岡:</strong>
+                <label><input type="checkbox" name="prefecture静岡" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture静岡" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>岐阜:</strong>
+                <label><input type="checkbox" name="prefecture岐阜" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>大阪:</strong>
+                <label><input type="checkbox" name="prefecture大阪" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture大阪" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>愛媛:</strong>
+                <label><input type="checkbox" name="prefecture愛媛" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>愛知:</strong>
+                <label><input type="checkbox" name="prefecture愛知" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture愛知" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>北海道:</strong>
+                <label><input type="checkbox" name="prefecture北海道" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture北海道" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>宮城:</strong>
+                <label><input type="checkbox" name="prefecture宮城" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture宮城" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>奈良:</strong>
+                <label><input type="checkbox" name="prefecture奈良" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>福岡:</strong>
+                <label><input type="checkbox" name="prefecture福岡" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture福岡" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>鳥取:</strong>
+                <label><input type="checkbox" name="prefecture鳥取" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>岡山:</strong>
+                <label><input type="checkbox" name="prefecture岡山" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>神奈川:</strong>
+                <label><input type="checkbox" name="prefecture神奈川" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture神奈川" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>秋田:</strong>
+                <label><input type="checkbox" name="prefecture秋田" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>石川:</strong>
+                <label><input type="checkbox" name="prefecture石川" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture石川" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>千葉:</strong>
+                <label><input type="checkbox" name="prefecture千葉" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>大分:</strong>
+                <label><input type="checkbox" name="prefecture大分" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>宮崎:</strong>
+                <label><input type="checkbox" name="prefecture宮崎" value="1"> 1</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>広島:</strong>
+                <label><input type="checkbox" name="prefecture広島" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture広島" value="2"> 2</label>
+            </div>
+            <div class="checkbox-label">
+                <strong>京都:</strong>
+                <label><input type="checkbox" name="prefecture京都" value="1"> 1</label>
+                <label><input type="checkbox" name="prefecture京都" value="2"> 2</label>
+            </div>
+        </div>
+
+        <button type="button" id="generateButton">画像を生成</button>
+    </form>
+    <div style="display: flex; justify-content: center; width: 100%;">
+        <canvas id="licenseCanvas" width="970" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('licenseCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // フォントサイズを変数で管理
+        const fontSize = 30; // フォントサイズ
+        ctx.font = `${fontSize}px Arial`; // フォントの設定
+
+        // 位置の定義
+        const namePosition = { x: 240, y: 10 };      // 名前
+        const agePosition = { x: 680, y: 10 };       // 年齢
+        const genderPosition = { x: 800, y: 10 };    // 性別
+        const songPosition = { x: 240, y: 105 };     // 聴きたい曲
+        const commentPosition = { x: 20, y: 204 };  // 一言
+        const imagePosition = { x: 589, y: 152 };   // 画像
+        const prefecturePosition = { x: 78, y: 423}; // 参戦予定
+        const prefecturePosition2 = { x: 78, y: 519 }; // 参戦予定2
+
+        // 文字数に基づく改行処理
+        function wrapTextByCharCount(ctx, text, x, y, maxCharsPerLine, lineHeight) {
+            const lines = text.split('\n'); // 改行コードで分割
+            let currentY = y;
+
+            for (let line of lines) {
+                let currentLine = '';
+
+                for (let i = 0; i < line.length; i++) {
+                    currentLine += line[i];
+
+                    // 指定の文字数に達したら改行
+                    if ((i + 1) % maxCharsPerLine === 0 && i !== line.length - 1) {
+                        ctx.fillText(currentLine, x, currentY);
+                        currentLine = '';
+                        currentY += lineHeight;
+                    }
+                }
+
+                // 残った文字列を描画
+                if (currentLine) {
+                    ctx.fillText(currentLine, x, currentY);
+                    currentY += lineHeight; // 次の行に移動
+                }
+            }
+        }
+
+        // 画像生成ボタンの処理
+        document.getElementById('generateButton').addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
+            const age = document.querySelector('input[name="age"]:checked') ? document.querySelector('input[name="age"]:checked').value : '';
+            const favoriteSong = document.getElementById('favoriteSong').value;
+            const comment = document.getElementById('comment').value;
+            const imageInput = document.getElementById('imageInput').files[0];
+
+            // 背景画像の設定
+            const backgroundImage = new Image();
+            backgroundImage.src = 'dd.drawio.png'; // 同ディレクトリに背景画像を配置
+
+            backgroundImage.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+                // 名前を描画
+                ctx.fillText(name, namePosition.x, namePosition.y + 30);
+                // 年齢を描画（未選択の場合は何も表示しない）
+                if (age !== '未選択') {
+                    ctx.fillText(age, agePosition.x, agePosition.y + 30);
+                }
+                // 性別を描画（未選択の場合は何も表示しない）
+                if (gender !== '未選択') {
+                    ctx.fillText(gender, genderPosition.x, genderPosition.y + 30);
+                }
+                
+                // 聴きたい曲を描画 (12文字ごとに改行)
+                wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
+
+                // 一言を描画 (16文字ごとに改行)
+                wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
+                
+                // 画像の描画（大きい方を380pxにリサイズ）
+                if (imageInput) {
+                    const img = new Image();
+                    img.src = URL.createObjectURL(imageInput);
+                    img.onload = function() {
+                        const originalWidth = img.width;
+                        const originalHeight = img.height;
+
+                        let scaledWidth, scaledHeight;
+
+                        // 縦横比を維持しつつ、大きい方を380に設定
+                        if (originalWidth > originalHeight) {
+                            scaledWidth = 380;
+                            scaledHeight = (originalHeight / originalWidth) * 380;
+                        } else {
+                            scaledHeight = 380;
+                            scaledWidth = (originalWidth / originalHeight) * 380;
+                        }
+
+                        ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
+                    }
+                }
+
+
+                // 参戦予定の表示
+                let prefectureText = [];
+                const isBothChecked = {};
+                ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
+                    const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
+                    const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                    
+                    if (checkbox1.checked || checkbox2?.checked) {
+                        isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
+                        prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
+                    } else {
+                        prefectureText.push('-');
+                    }
+
+                });
+                
+                // ピクセル調整のため、両の場合のみ2ピクセル少なく
+                const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
+
+                // 表示位置の調整
+                prefectureText.forEach((text, index) => {
+                    if (index < 11) {
+                        ctx.fillText(text, prefecturePosition.x + 21 + (index * 39) - adjustedX, prefecturePosition.y);
+                    } else {
+                        ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
