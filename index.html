@@ -265,7 +265,7 @@
             }
         }
 
-        document.getElementById('generateButton').addEventListener('click', function() {
+        document.getElementById('generateButton').addEventListener('click', async function() {
             const name = document.getElementById('name').value;
             const gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
             const age = document.querySelector('input[name="age"]:checked') ? document.querySelector('input[name="age"]:checked').value : '';
@@ -276,10 +276,13 @@
 
             const backgroundImage = new Image();
             backgroundImage.src = 'dd.drawio.png'; // 同ディレクトリに背景画像を配置
-
-            backgroundImage.onload = function() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            await new Promise((resolve) => {
+                backgroundImage.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+                    resolve();
+                };
+            });
 
                 ctx.fillText(name, namePosition.x, namePosition.y + 30);
                 if (age !== '未選択') {
@@ -295,23 +298,28 @@
                 wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
                 wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
 
-                if (imageInput) {
-                    const img = new Image();
-                    img.src = URL.createObjectURL(imageInput);
-                    img.onload = function() {
-                        const originalWidth = img.width;
-                        const originalHeight = img.height;
+                // 画像の描画
+    if (imageInput) {
+        const img = new Image();
+        img.src = URL.createObjectURL(imageInput);
 
-                        let scaledWidth, scaledHeight;
-                        if (originalWidth > originalHeight) {
-                            scaledWidth = 380;
-                            scaledHeight = (originalHeight / originalWidth) * 380;
-                        } else {
-                            scaledHeight = 380;
-                            scaledWidth = (originalWidth / originalHeight) * 380;
-                        }
-                        ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
-                    }
+        await new Promise((resolve) => {
+                        img.onload = function() {
+                            const originalWidth = img.width;
+                            const originalHeight = img.height;
+
+                            let scaledWidth, scaledHeight;
+                            if (originalWidth > originalHeight) {
+                                scaledWidth = 380;
+                                scaledHeight = (originalHeight / originalWidth) * 380;
+                            } else {
+                                scaledHeight = 380;
+                                scaledWidth = (originalWidth / originalHeight) * 380;
+                            }
+                            ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
+                            resolve();
+                        };
+                    });
                 }
                 // 参戦予定の表示
                 let prefectureText = [];
@@ -345,7 +353,6 @@
                 imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
                 imgElement.style.display = 'block'; // 画像を表示
 
-            }
         });
     </script>
 </body>
