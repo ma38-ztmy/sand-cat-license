@@ -74,7 +74,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.0</p>
+    <p>ver 0.1.1</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
@@ -107,7 +107,7 @@
         <label for="favoriteSong">聴きたい曲 (最大48文字):</label>
         <input type="text" id="favoriteSong" maxlength="48" required>
 
-        <label for="comment">一言 (100文字、4行までを推奨):</label>
+        <label for="comment">一言 (64文字、4行までを推奨):</label>
         <textarea id="comment" maxlength="200" rows="4" required></textarea>
 
         <label for="number">番号:</label>
@@ -244,12 +244,12 @@
         const genderPosition = { x: 765, y: 10 };    // 性別
         const areaPosition = { x: 840, y: 10 };      // エリア
         const songPosition = { x: 210, y: 105 };     // 聴きたい曲
-        const commentPosition = { x: 20, y: 220 };  // 一言
-        const lankPosition = { x: 10, y: 330 };      // 不良 / 優良
+        const commentPosition = { x: 90, y: 220 };  // 一言
+        const lankPosition = { x: 10, y: 290 };      // 不良 / 優良
         const imagePosition = { x: 588, y: 155 };   // 画像
-        const numberPosition = { x: 220, y: 440 };   // 番号
-        const prefecturePosition = { x: 226, y: 465}; // 参戦予定
-        const prefecturePosition2 = { x: 226, y: 530 }; // 参戦予定2
+        const numberPosition = { x: 140, y: 380 };   // 番号
+        const prefecturePosition = { x: 78, y: 423}; // 参戦予定
+        const prefecturePosition2 = { x: 78, y: 519 }; // 参戦予定2
 
         function wrapTextByCharCount(ctx, text, x, y, maxCharsPerLine, lineHeight) {
             const lines = text.split('\n'); // 改行コードで分割
@@ -316,7 +316,11 @@
             }
 
             wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
-            wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
+
+            ctx.save(); // 現在の設定を保存
+            ctx.font = '27px Arial'; // 文字サイズを小さく設定
+            wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 30);
+            ctx.restore(); // フォントサイズを元に戻す
 
             // 画像の描画
             if (lank !== 'bt0') {
@@ -369,38 +373,33 @@
             
             ctx.restore(); // フォントサイズを元に戻す
 
-            // 参戦予定の表示
-            let prefectureText = [];
-            const isBothChecked = {};
-            ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
-                const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
-                const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                // 参戦予定の表示
+                let prefectureText = [];
+                const isBothChecked = {};
+                ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
+                    const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
+                    const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                    
+                    if (checkbox1.checked || checkbox2?.checked) {
+                        isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
+                        prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
+                    } else {
+                        prefectureText.push('-');
+                    }
+
+                });
                 
-                if (checkbox1.checked || checkbox2?.checked) {
-                    isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
-                    prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
-                } else {
-                    prefectureText.push('-');
-                }
-            });
+                // ピクセル調整のため、両の場合のみ2ピクセル少なく
+                const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
 
-            // フォントサイズを変更して表示
-            ctx.save(); // 現在の設定を保存
-            ctx.font = '14px Arial'; // 文字サイズを小さく設定
-
-            // ピクセル調整のため、両の場合のみ2ピクセル少なく
-            const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
-
-            // 表示位置の調整
-            prefectureText.forEach((text, index) => {
-                if (index < 11) {
-                    ctx.fillText(text, prefecturePosition.x + (index * 28) - adjustedX, prefecturePosition.y);
-                } else {
-                    ctx.fillText(text, prefecturePosition2.x + ((index - 11) * 28) - adjustedX, prefecturePosition2.y);
-                }
-            })
-
-            ctx.restore(); // フォントサイズを元に戻す
+                // 表示位置の調整
+                prefectureText.forEach((text, index) => {
+                    if (index < 11) {
+                        ctx.fillText(text, prefecturePosition.x + 21 + (index * 39) - adjustedX, prefecturePosition.y);
+                    } else {
+                        ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
+                    }
+                });
             
             const imgElement = document.getElementById('generatedImage');
             imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
