@@ -94,6 +94,13 @@
             <label><input type="radio" name="age" value="20以上"> 20以上</label>
         </div>
 
+        <label for="lank">優良？不良？:</label>
+        <div>
+            <label><input type="radio" name="lank" value="bt2" checked> 不良</label>
+            <label><input type="radio" name="lank" value="bt1"> 優良</label>
+            <label><input type="radio" name="lank" value="bt0"> なし</label>
+        </div>
+
         <label for="favoriteSong">出現エリア (最大4文字):</label>
         <input type="text" id="area" maxlength="4" required>
 
@@ -102,6 +109,9 @@
 
         <label for="comment">一言 (100文字、4行までを推奨):</label>
         <textarea id="comment" maxlength="200" rows="4" required></textarea>
+
+        <label for="number">番号:</label>
+        <input type="text" id="number" maxlength="12" value="000089894649" required>
 
         <label for="imageInput">画像:</label>
         <input type="file" id="imageInput" accept="image/*" required>
@@ -235,7 +245,9 @@
         const areaPosition = { x: 840, y: 10 };      // エリア
         const songPosition = { x: 210, y: 105 };     // 聴きたい曲
         const commentPosition = { x: 20, y: 220 };  // 一言
+        const lankPosition = { x: 10, y: 330 };      // 不良 / 優良
         const imagePosition = { x: 588, y: 155 };   // 画像
+        const numberPosition = { x: 220, y: 440 };   // 番号
         const prefecturePosition = { x: 226, y: 465}; // 参戦予定
         const prefecturePosition2 = { x: 226, y: 530 }; // 参戦予定2
 
@@ -269,8 +281,10 @@
             const name = document.getElementById('name').value;
             const gender = document.querySelector('input[name="gender"]:checked') ? document.querySelector('input[name="gender"]:checked').value : '';
             const age = document.querySelector('input[name="age"]:checked') ? document.querySelector('input[name="age"]:checked').value : '';
+            const lank = document.querySelector('input[name="lank"]:checked') ? document.querySelector('input[name="lank"]:checked').value : '';
             const favoriteSong = document.getElementById('favoriteSong').value;
             const area = document.getElementById('area').value;
+            const number = document.getElementById('number').value;
             const comment = document.getElementById('comment').value;
             const imageInput = document.getElementById('imageInput').files[0];
 
@@ -284,86 +298,113 @@
                 };
             });
 
-                ctx.fillText(name, namePosition.x, namePosition.y + 30);
-                if (age !== '未選択') {
-                    ctx.fillText(age, agePosition.x, agePosition.y + 30);
+            ctx.fillText(name, namePosition.x, namePosition.y + 30);
+            if (age !== '未選択') {
+                ctx.fillText(age, agePosition.x, agePosition.y + 30);
+            }
+            if (gender !== '未選択') {
+                ctx.fillText(gender, genderPosition.x, genderPosition.y + 30);
+            }
+            if (area !== '') {
+                console.log(area.length)
+
+                if (area.length ==2) {
+                    ctx.fillText(area, areaPosition.x + 25, areaPosition.y + 30);
+                }else{
+                    ctx.fillText(area, areaPosition.x, areaPosition.y + 30);
                 }
-                if (gender !== '未選択') {
-                    ctx.fillText(gender, genderPosition.x, genderPosition.y + 30);
-                }
-                if (area !== '') {
-                    console.log(area.length)
+            }
 
-                    if (area.length ==2) {
-                        ctx.fillText(area, areaPosition.x + 25, areaPosition.y + 30);
-                    }else{
-                        ctx.fillText(area, areaPosition.x, areaPosition.y + 30);
-                    }
-                }
+            wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
+            wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
 
-                wrapTextByCharCount(ctx, favoriteSong, songPosition.x, songPosition.y, 24, 38);
-                wrapTextByCharCount(ctx, comment, commentPosition.x, commentPosition.y + 20, 16, 38);
+            // 画像の描画
+            if (lank !== 'bt0') {
+                const img = new Image();
+                const filename = lank+'.drawio.png'
+                console.log(filename)
+                img.src = filename;
 
-        // 画像の描画
-        if (imageInput) {
-            const img = new Image();
-            img.src = URL.createObjectURL(imageInput);
+                await new Promise((resolve) => {
+                    img.onload = function() {
+                        ctx.drawImage(img, lankPosition.x, lankPosition.y);
+                        resolve();
+                    };
+                });
+            }
 
-            await new Promise((resolve) => {
-                img.onload = function() {
-                    const originalWidth = img.width;
-                    const originalHeight = img.height;
+            // 画像の描画
+            if (imageInput) {
+                const img = new Image();
+                img.src = URL.createObjectURL(imageInput);
 
-                    let scaledWidth, scaledHeight;
-                    if (originalWidth > originalHeight) {
-                        scaledWidth = 380;
-                        scaledHeight = (originalHeight / originalWidth) * 380;
-                    } else {
-                        scaledHeight = 380;
-                        scaledWidth = (originalWidth / originalHeight) * 380;
-                    }
-                    ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
-                    resolve();
-                };
-            });
-        }
+                await new Promise((resolve) => {
+                    img.onload = function() {
+                        const originalWidth = img.width;
+                        const originalHeight = img.height;
 
-        // 参戦予定の表示
-        let prefectureText = [];
-        const isBothChecked = {};
-        ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
-            const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
-            const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                        let scaledWidth, scaledHeight;
+                        if (originalWidth > originalHeight) {
+                            scaledWidth = 380;
+                            scaledHeight = (originalHeight / originalWidth) * 380;
+                        } else {
+                            scaledHeight = 380;
+                            scaledWidth = (originalWidth / originalHeight) * 380;
+                        }
+                        ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
+                        resolve();
+                    };
+                });
+            }
+
+            // 番号の描画
+            // フォントサイズを変更して表示
+            ctx.save(); // 現在の設定を保存
+            ctx.font = '20px Arial'; // 文字サイズを小さく設定
+            ctx.fillText("第", numberPosition.x-50, numberPosition.y);
+            ctx.font = '32px Arial'; // 文字サイズを小さく設定
+            ctx.fillText(number, numberPosition.x, numberPosition.y);
+            ctx.font = '20px Arial'; // 文字サイズを小さく設定
+            ctx.fillText("号", numberPosition.x+270, numberPosition.y);
             
-            if (checkbox1.checked || checkbox2?.checked) {
-                isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
-                prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
-            } else {
-                prefectureText.push('-');
-            }
-        });
+            ctx.restore(); // フォントサイズを元に戻す
 
-        // フォントサイズを変更して表示
-        ctx.save(); // 現在の設定を保存
-        ctx.font = '14px Arial'; // 文字サイズを小さく設定
+            // 参戦予定の表示
+            let prefectureText = [];
+            const isBothChecked = {};
+            ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
+                const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
+                const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                
+                if (checkbox1.checked || checkbox2?.checked) {
+                    isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
+                    prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
+                } else {
+                    prefectureText.push('-');
+                }
+            });
 
-        // ピクセル調整のため、両の場合のみ2ピクセル少なく
-        const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
+            // フォントサイズを変更して表示
+            ctx.save(); // 現在の設定を保存
+            ctx.font = '14px Arial'; // 文字サイズを小さく設定
 
-        // 表示位置の調整
-        prefectureText.forEach((text, index) => {
-            if (index < 11) {
-                ctx.fillText(text, prefecturePosition.x + (index * 28) - adjustedX, prefecturePosition.y);
-            } else {
-                ctx.fillText(text, prefecturePosition2.x + ((index - 11) * 28) - adjustedX, prefecturePosition2.y);
-            }
-        })
+            // ピクセル調整のため、両の場合のみ2ピクセル少なく
+            const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
 
-        ctx.restore(); // フォントサイズを元に戻す
-        
-        const imgElement = document.getElementById('generatedImage');
-        imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
-        imgElement.style.display = 'block'; // 画像を表示
+            // 表示位置の調整
+            prefectureText.forEach((text, index) => {
+                if (index < 11) {
+                    ctx.fillText(text, prefecturePosition.x + (index * 28) - adjustedX, prefecturePosition.y);
+                } else {
+                    ctx.fillText(text, prefecturePosition2.x + ((index - 11) * 28) - adjustedX, prefecturePosition2.y);
+                }
+            })
+
+            ctx.restore(); // フォントサイズを元に戻す
+            
+            const imgElement = document.getElementById('generatedImage');
+            imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
+            imgElement.style.display = 'block'; // 画像を表示
 
         });
     </script>
