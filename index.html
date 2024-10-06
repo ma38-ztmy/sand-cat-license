@@ -353,9 +353,9 @@
         // 表示位置の調整
         prefectureText.forEach((text, index) => {
             if (index < 11) {
-                ctx.fillText(text, prefecturePosition.x + (index * 27) - adjustedX, prefecturePosition.y);
+                ctx.fillText(text, prefecturePosition.x + (index * 28) - adjustedX, prefecturePosition.y);
             } else {
-                ctx.fillText(text, prefecturePosition2.x + ((index - 11) * 27) - adjustedX, prefecturePosition2.y);
+                ctx.fillText(text, prefecturePosition2.x + ((index - 11) * 28) - adjustedX, prefecturePosition2.y);
             }
         })
 
