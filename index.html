@@ -69,40 +69,6 @@
             display: flex;
             align-items: center;
         }
-        /* ボタンコンテナを横並びにするためのスタイル */
-        .button-container {
-                display: flex;           /* 子要素を横並びにする */
-                justify-content: center; /* 中央に配置 */
-                gap: 10px;               /* ボタン間のスペース */
-                margin-top: 20px;
-        }        
-        .copy-button {
-            background-color: transparent; /* 背景色を透明に */
-            color: blue; /* テキストの色を青に */
-            border: 2px solid blue; /* 青のボーダーを追加 */
-            padding: 10px 20px; /* ボタンの内側の余白 */
-            border-radius: 5px; /* 角を丸くする */
-            cursor: pointer; /* マウスホバー時にポインターを表示 */
-            transition: background-color 0.3s ease, color 0.3s ease; /* ホバー時のアニメーション */
-        }
-
-        .copy-button:hover {
-            background-color: blue; /* ホバー時に青背景に */
-            color: white; /* ホバー時に文字色を白に */
-        }        
-        .x-button {
-            background-color: #030303; /* Xのブランドカラー */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .x-button:hover {
-            background-color: #0d8dd9; /* ホバー時の色 */
-        }
         @media (min-width: 600px) {
             form {
                 max-width: 600px;
@@ -113,7 +79,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.5</p>
+    <p>ver 0.1.6</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
@@ -262,12 +228,6 @@
         </div>
         
         <button type="button" id="generateButton">画像を生成</button>
-
-        <div id="buttonContainer" style="display: none;" class="button-container">
-            <button id="copyButton" class="copy-button">画面をコピー</button>
-            <button id="tweetButton" class="x-button">Xでポスト</button>
-        </div>        
-
     </form>
     
     <div style="display: flex; justify-content: center; width: 100%;">
@@ -275,7 +235,6 @@
     </div>
 
     <img id="generatedImage" alt="生成された画像" style="display: none;" />
-    
 
     <script>
         const canvas = document.getElementById('licenseCanvas');
@@ -457,46 +416,7 @@
             imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
             imgElement.style.display = 'block'; // 画像を表示
 
-            // 画像生成後にコピー/ポスト用ボタンを表示する
-            document.getElementById('buttonContainer').style.display = 'block';
-
         });
-
-        // クリップボードに画像をコピーする関数
-        async function copyToClipboard() {
-            // キャンバスの要素を取得
-            const canvas = document.getElementById('licenseCanvas');
-            
-            // キャンバスの内容をBlobとして取得 (PNG形式)
-            canvas.toBlob(async function(blob) {
-                try {
-                    // クリップボードに画像をコピー
-                    await navigator.clipboard.write([
-                        new ClipboardItem({
-                            'image/png': blob
-                        })
-                    ]);
-                    alert("画像がクリップボードにコピーされました！");
-                } catch (err) {
-                    console.error("画像をクリップボードにコピーできませんでした:", err);
-                    alert("クリップボードにコピーするのに失敗しました。");
-                }
-            }, 'image/png');
-        }
-
-        // コピー用ボタンのクリックイベント
-        document.getElementById('copyButton').addEventListener('click', copyToClipboard);
-
-        // Xでシェアするための関数
-        function postToX() {
-            const text = "免許証風自己紹介カードを作りました！\n#スナネコ参戦カード";  // シェアするテキスト
-            const postUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`; // 旧Twitterの投稿URL
-            window.open(postUrl, '_blank');  // 新しいタブで開く
-        }
-
-        // Xのポストボタンのクリックイベント
-        document.getElementById('tweetButton').addEventListener('click', postToX);
-
-</script>
+    </script>
 </body>
 </html>
