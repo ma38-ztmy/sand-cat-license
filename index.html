@@ -56,10 +56,9 @@
         #generatedImage {
             margin-top: 20px;
             display: block;
-            max-width: 100%;
-            height: auto;
-            max-height: 600px;
-            max-width: 970px; /* 最大幅を設定 */            
+            width: 100%; /* 横幅を100%に設定して画面幅に合わせる */
+            height: auto; /* 縦横比を維持 */
+            max-height: 62%; 
         }
         #prefectures {
             display: flex;
@@ -80,7 +79,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.4</p>
+    <p>ver 0.1.5</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
@@ -361,52 +360,58 @@
                             scaledHeight = 380;
                             scaledWidth = (originalWidth / originalHeight) * 380;
                         }
-                        ctx.drawImage(img, imagePosition.x, imagePosition.y, scaledWidth, scaledHeight);
+
+                        // 中央寄せのための位置調整
+                        const offsetX = (380 - scaledWidth) / 2;  // 横方向の余白を計算して半分を加算
+                        const offsetY = (380 - scaledHeight) / 2; // 縦方向の余白を計算して半分を加算
+
+                        ctx.drawImage(img, imagePosition.x + offsetX, imagePosition.y + offsetY, scaledWidth, scaledHeight);
                         resolve();
                     };
                 });
             }
 
             // 番号の描画
-            // フォントサイズを変更して表示
-            ctx.save(); // 現在の設定を保存
-            ctx.font = '20px Arial'; // 文字サイズを小さく設定
-            ctx.fillText("第", numberPosition.x-50, numberPosition.y);
-            ctx.font = '32px Arial'; // 文字サイズを小さく設定
-            ctx.fillText(number, numberPosition.x, numberPosition.y);
-            ctx.font = '20px Arial'; // 文字サイズを小さく設定
-            ctx.fillText("号", numberPosition.x+270, numberPosition.y);
-            
-            ctx.restore(); // フォントサイズを元に戻す
-
-                // 参戦予定の表示
-                let prefectureText = [];
-                const isBothChecked = {};
-                ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
-                    const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
-                    const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
-                    
-                    if (checkbox1.checked || checkbox2?.checked) {
-                        isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
-                        prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
-                    } else {
-                        prefectureText.push('-');
-                    }
-
-                });
+            if(number !== ''){
+                // フォントサイズを変更して表示
+                ctx.save(); // 現在の設定を保存
+                ctx.font = '20px Arial'; // 文字サイズを小さく設定
+                ctx.fillText("第", numberPosition.x-50, numberPosition.y);
+                ctx.font = '32px Arial'; // 文字サイズを小さく設定
+                ctx.fillText(number, numberPosition.x, numberPosition.y);
+                ctx.font = '20px Arial'; // 文字サイズを小さく設定
+                ctx.fillText("号", numberPosition.x+270, numberPosition.y);
                 
-                // ピクセル調整のため、両の場合のみ2ピクセル少なく
-                const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
+                ctx.restore(); // フォントサイズを元に戻す
+            }
+            // 参戦予定の表示
+            let prefectureText = [];
+            const isBothChecked = {};
+            ['群馬', '埼玉', '東京', '静岡', '岐阜', '大阪', '愛媛', '愛知', '北海道', '宮城', '奈良', '福岡', '鳥取', '岡山', '神奈川', '秋田', '石川', '千葉', '大分', '宮崎', '広島', '京都'].forEach(prefecture => {
+                const checkbox1 = document.querySelector(`input[name="prefecture${prefecture}"][value="1"]`);
+                const checkbox2 = document.querySelector(`input[name="prefecture${prefecture}"][value="2"]`);
+                
+                if (checkbox1.checked || checkbox2?.checked) {
+                    isBothChecked[prefecture] = checkbox1.checked && (checkbox2?.checked == true ); // 両方チェックされているかどうか
+                    prefectureText.push(isBothChecked[prefecture] ? '両' : (checkbox1.checked ? '1' : '2'));
+                } else {
+                    prefectureText.push('-');
+                }
 
-                // 表示位置の調整
-                prefectureText.forEach((text, index) => {
-                    if (index < 11) {
-                        ctx.fillText(text, prefecturePosition.x + 21 + (index * 39) - adjustedX, prefecturePosition.y);
-                    } else {
-                        ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
-                    }
-                });
+            });
             
+            // ピクセル調整のため、両の場合のみ2ピクセル少なく
+            const adjustedX = prefectureText.includes('両') ? 9 : 2 ;
+
+            // 表示位置の調整
+            prefectureText.forEach((text, index) => {
+                if (index < 11) {
+                    ctx.fillText(text, prefecturePosition.x + 21 + (index * 39) - adjustedX, prefecturePosition.y);
+                } else {
+                    ctx.fillText(text, prefecturePosition2.x + 21 + ((index - 11) * 39) - adjustedX, prefecturePosition2.y);
+                }
+            });
+        
             const imgElement = document.getElementById('generatedImage');
             imgElement.src = canvas.toDataURL('image/png'); // 生成した画像をimgにセット
             imgElement.style.display = 'block'; // 画像を表示
