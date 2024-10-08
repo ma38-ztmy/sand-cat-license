@@ -82,7 +82,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.7</p>
+    <p>ver 0.1.8</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
@@ -112,12 +112,12 @@
         <label for="favoriteSong">出現エリア (最大4文字):</label>
         <input type="text" id="area" maxlength="4" required>
 
-        <label for="favoriteSong">聴きたい曲 (最大48文字):</label>
-        <input type="text" id="favoriteSong" maxlength="48" required>
-
-        <label for="comment">一言 (64文字、4行までを推奨):</label>
-        <textarea id="comment" maxlength="200" rows="4" required></textarea>
-
+        <label for="favoriteSong">聴きたい曲 (最大48文字):<span id="songCount">(0/48)</span></label>
+        <input type="text" id="favoriteSong" maxlength="48" required>        
+        
+        <label for="comment">一言 (64文字、4行までを推奨):<span id="commentCount">(0/64)</span></label>
+        <textarea id="comment" maxlength="64" rows="4" required></textarea>        
+        
         <label for="number">番号:</label>
         <input type="text" id="number" maxlength="12" value="000089894649" required>
 
@@ -258,6 +258,23 @@
         const numberPosition = { x: 140, y: 380 };   // 番号
         const prefecturePosition = { x: 78, y: 423}; // 参戦予定
         const prefecturePosition2 = { x: 78, y: 519 }; // 参戦予定2
+
+        // '聴きたい曲' の文字数を表示
+        const favoriteSongInput = document.getElementById('favoriteSong');
+        const songCountSpan = document.getElementById('songCount');
+        favoriteSongInput.addEventListener('input', () => {
+            console.log("aaa")
+            const currentLength = favoriteSongInput.value.length;
+            songCountSpan.textContent = `(${currentLength}/48)`;
+        });
+
+        // '一言' の文字数を表示
+        const commentInput = document.getElementById('comment');
+        const commentCountSpan = document.getElementById('commentCount');
+        commentInput.addEventListener('input', () => {
+            const currentLength = commentInput.value.length;
+            commentCountSpan.textContent = `(${currentLength}/64)`;
+        });
 
         function wrapTextByCharCount(ctx, text, x, y, maxCharsPerLine, lineHeight) {
             const lines = text.split('\n'); // 改行コードで分割
@@ -420,6 +437,7 @@
             imgElement.style.display = 'block'; // 画像を表示
 
         });
+
     </script>
 </body>
 </html>
