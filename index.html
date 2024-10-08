@@ -33,13 +33,15 @@
         }
         label {
             margin-bottom: 5px;
+            font-size: 16px; /* フォントサイズを16pxに設定 */
         }
-        input[type="text"], input[type="number"], input[type="file"], select {
+        input[type="text"], input[type="number"], input[type="file"], select, textarea {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             width: 100%;
             box-sizing: border-box;
+            font-size: 16px; /* フォントサイズを16pxに設定 */
         }
         button {
             padding: 10px;
@@ -48,7 +50,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 16px; /* フォントサイズを16pxに設定 */
         }
         button:hover {
             background-color: #0056b3;
@@ -68,6 +70,7 @@
         .checkbox-label {
             display: flex;
             align-items: center;
+            font-size: 16px; /* フォントサイズを16pxに設定 */
         }
         @media (min-width: 600px) {
             form {
@@ -79,7 +82,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.6</p>
+    <p>ver 0.1.7</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
