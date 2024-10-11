@@ -87,6 +87,28 @@
                 margin: auto; /* センター揃え */
             }
         }
+
+        /* コンテナの設定 */
+        .container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        /* 左側（画像）の設定 */
+        #preview {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            object-fit: contain;
+        }
+
+        /* 右側（ファイル選択・貼り付けエリア）の設定 */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }        
     </style>
 </head>
 <body>
@@ -131,8 +153,16 @@
         <input type="text" id="number" maxlength="12" value="000089894649" required>
 
         <label for="imageInput">画像:</label>
-        <input type="file" id="imageInput" accept="image/*" required>
-
+        <div class="container">
+            <!-- 左側：画像プレビュー -->
+            <img id="preview" src="" alt="プレビュー" style="display:none;">
+    
+            <!-- 右側：ファイル選択と貼り付けエリア -->
+            <div class="controls">
+                <input type="file" id="imageInput" accept="image/*" required>
+                <textarea id="pasteArea" rows="4" cols="40" placeholder="ここに画像を貼り付けることもできます"></textarea>
+            </div>
+        </div>
         <label>参戦予定:</label>
         <div id="prefectures">
             <!-- 都道府県のチェックボックスをここに追加 -->
@@ -251,6 +281,7 @@
     <script>
         const canvas = document.getElementById('licenseCanvas');
         const ctx = canvas.getContext('2d');
+        const preview = document.getElementById('preview');
 
         // フォントサイズを変数で管理
         const fontSize = 30; // フォントサイズ
@@ -372,9 +403,10 @@
             }
 
             // 画像の描画
-            if (imageInput) {
+            if (preview) {
                 const img = new Image();
-                img.src = URL.createObjectURL(imageInput);
+                // img.src = URL.createObjectURL(imageInput);
+                img.src = preview.src;
 
                 await new Promise((resolve) => {
                     img.onload = function() {
@@ -447,6 +479,44 @@
 
         });
 
+        // ペーストイベントをリスン
+        const pasteArea = document.getElementById('pasteArea');
+        pasteArea.addEventListener('paste', (event) => {
+            const items = event.clipboardData.items;
+            for (let item of items) {
+                if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block'; // img要素を表示
+
+                    };
+                    reader.readAsDataURL(file);
+                    imageInput.value = '';
+                    pasteArea.value = '';
+                }
+            }
+        });
+        // ファイル選択時に呼ばれるイベントリスナー
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0]; // 選択された最初のファイルを取得
+            if (file && file.type.startsWith('image/')) { // 画像ファイルであるかを確認
+                const reader = new FileReader(); // FileReaderのインスタンスを作成
+
+                // ファイル読み込みが完了した際に実行される関数
+                reader.onload = (e) => {
+                    preview.src = e.target.result; // 読み込んだデータをimgのsrcに設定
+                    preview.style.display = 'block'; // img要素を表示
+                };
+
+                reader.readAsDataURL(file); // ファイルをデータURL形式で読み込む
+            } else {
+                // 画像ファイルではない場合、プレビューを非表示
+                preview.style.display = 'none';
+                preview.src = '';
+            }
+        });        
     </script>
 </body>
 </html>
