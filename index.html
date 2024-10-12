@@ -113,7 +113,7 @@
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.8</p>
+    <p>ver 0.1.9</p>
     <form id="licenseForm">
         <!-- (フォーム内容はそのまま) -->
         <label for="name">名前 (最大14文字):</label>
@@ -155,12 +155,12 @@
         <label for="imageInput">画像:</label>
         <div class="container">
             <!-- 左側：画像プレビュー -->
-            <img id="preview" src="" alt="プレビュー" style="display:none;">
+            <img id="preview" width ="128" height="128" alt="プレビュー" style="display:none;">
     
             <!-- 右側：ファイル選択と貼り付けエリア -->
             <div class="controls">
                 <input type="file" id="imageInput" accept="image/*" required>
-                <textarea id="pasteArea" rows="4" cols="40" placeholder="ここに画像を貼り付けることもできます"></textarea>
+                <textarea id="pasteArea" rows="1" cols="40" placeholder="ここに画像を貼り付けることもできます"></textarea>
             </div>
         </div>
         <label>参戦予定:</label>
@@ -303,7 +303,6 @@
         const favoriteSongInput = document.getElementById('favoriteSong');
         const songCountSpan = document.getElementById('songCount');
         favoriteSongInput.addEventListener('input', () => {
-            console.log("aaa")
             const currentLength = favoriteSongInput.value.length;
             songCountSpan.textContent = `(${currentLength}/48)`;
         });
@@ -403,7 +402,8 @@
             }
 
             // 画像の描画
-            if (preview) {
+            console.log(preview.src)
+            if (preview && preview?.src != '') {
                 const img = new Image();
                 // img.src = URL.createObjectURL(imageInput);
                 img.src = preview.src;
