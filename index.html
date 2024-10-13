@@ -38,6 +38,8 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            margin-bottom: 10px;  /* 下に余白を追加 */
+            margin-top: 10px;     /* 上にも余白を追加 */
             gap: 10px;
         }
         label {
@@ -76,6 +78,15 @@
             flex-direction: column;
             gap: 5px;
         }
+        .index-title {
+            border: 2px solid lightblue; /* 枠線を薄水色に設定 */
+            /* padding: 10px;                  内側の余白を追加 */
+            background-color: #f0f8ff;   /* 背景色を薄水色に設定 */
+            border-radius: 8px;          /* 角を丸くする */
+            text-align: center;          /* テキストを中央揃えにする */
+            /* margin-bottom: 20px;         下に余白を追加 */
+            /* font-weight: bold;           太字にする */
+        }        
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -102,20 +113,36 @@
             border: 1px solid #ccc;
             object-fit: contain;
         }
+        .right-align-text {
+            float: left;
+            margin-left: 5px; 
 
+        }
         /* 右側（ファイル選択・貼り付けエリア）の設定 */
         .controls {
             display: flex;
             flex-direction: column;
             gap: 10px;
-        }        
+        }       
+        .note{
+            font-size: 10px; /* フォントサイズを16pxに設定 */
+        } 
+        /* bottom-space */
+        .bottom-space {
+            margin-bottom: 5px;  /* 下に余白を追加 */
+            margin-top: 5px;     /* 上にも余白を追加 */
+        }
+
     </style>
 </head>
 <body>
     <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.9</p>
+    <p>ver 0.1.10</p>
     <form id="licenseForm">
-        <!-- (フォーム内容はそのまま) -->
+        <div class="index-title">
+            <span class="right-align-text">項目を入力してください <span>
+            <span class="note"> *入力項目はすべて任意です<span>
+        </div>
         <label for="name">名前 (最大14文字):</label>
         <input type="text" id="name" maxlength="14" required>
 
@@ -268,15 +295,21 @@
                 <label><input type="checkbox" name="prefecture京都" value="2"> 2</label>
             </div>
         </div>
-        
-        <button type="button" id="generateButton">画像を生成</button>
     </form>
-    
-    <div style="display: flex; justify-content: center; width: 100%;">
-        <canvas id="licenseCanvas" width="970" height="600" style="display:none;"></canvas>
-    </div>
+    <div class="bottom-space"></div>
+    <form id="licenseImage">
+        <div>
+            <button type="button" id="generateButton">画像を生成</button>
+        </div>        
+        
+        <div style="display: flex; justify-content: center; width: 100%;">
+            <canvas id="licenseCanvas" width="970" height="600" style="display:none;"></canvas>
+        </div>
 
-    <img id="generatedImage" alt="生成された画像" style="display: none;" />
+        <img id="generatedImage" alt="生成された画像" style="display: none;" />
+
+        <span class="note">作成された画像を保存してお使いください！！ <br> 投稿の際に #スナネコ参戦カード とつけると作者が喜びます☆</span>
+    </form>
 
     <script>
         const canvas = document.getElementById('licenseCanvas');
