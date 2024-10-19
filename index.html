@@ -114,6 +114,11 @@
             object-fit: contain;
         }
         .right-align-text {
+            float: right;
+            margin-left: 5px; 
+
+        }
+        .left-align-text {
             float: left;
             margin-left: 5px; 
 
@@ -136,11 +141,12 @@
     </style>
 </head>
 <body>
-    <h2>砂猫免許証作成メーカー</h2>
-    <p>ver 0.1.10</p>
+    <h1>砂猫免許証作成メーカー</h1>
+    <span class="note "> ver 0.1.11<span>
     <form id="licenseForm">
         <div class="index-title">
-            <span class="right-align-text">項目を入力してください <span>
+            <span class="left-align-text">項目を入力してください <span>
+                <br>
             <span class="note"> *入力項目はすべて任意です<span>
         </div>
         <label for="name">名前 (最大14文字):</label>
